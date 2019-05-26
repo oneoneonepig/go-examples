@@ -1,12 +1,14 @@
-# Clone repo
-```
-cd ~
-git clone https://github.com/oneoneonepig/go-examples.git
-```
+# Reference
+https://grpc.io/docs/quickstart/go/
 
 # Get gRPC
 ```
 go get -u google.golang.org/grpc
+```
+
+# Get helloworld source
+```
+go get -d github.com/oneoneonepig/go-examples/helloworld
 ```
 
 # Install protoc (Centos 7)
@@ -24,7 +26,7 @@ sudo apt install golang-google-grpc-dev
 ```
 # Generate gRPC code
 ```
-cd ~/go-examples/helloworld
+cd ~/go/src/github.com/oneoneonepig/go-examples/helloworld
 protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
 ```
 
