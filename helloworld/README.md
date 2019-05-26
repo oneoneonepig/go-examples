@@ -3,7 +3,7 @@
 go get -u google.golang.org/grpc
 ```
 
-# Install protoc
+# Install protoc (Centos 7)
 ```
 cd ~
 PROTOC_ZIP=protoc-3.7.1-osx-x86_64.zip
@@ -12,12 +12,14 @@ sudo unzip -o $PROTOC_ZIP -d /usr/local bin/protoc
 rm -f $PROTOC_ZIP
 ```
 
+# Install protoc (Debian 9)
+```
+sudo apt install golang-google-grpc-dev
+```
 # Generate gRPC code
 ```
 cd $GOPATH/src/google.golang.org/grpc/examples/helloworld
 protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
-# or
-sudo apt install golang-google-grpc-dev
 ```
 
 # Start server
