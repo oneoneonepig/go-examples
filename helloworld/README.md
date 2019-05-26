@@ -1,3 +1,9 @@
+# Clone repo
+```
+cd ~
+git clone https://github.com/oneoneonepig/go-examples.git
+```
+
 # Get gRPC
 ```
 go get -u google.golang.org/grpc
@@ -18,7 +24,7 @@ sudo apt install golang-google-grpc-dev
 ```
 # Generate gRPC code
 ```
-cd $GOPATH/src/google.golang.org/grpc/examples/helloworld
+cd ~/go-examples/helloworld
 protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
 ```
 
