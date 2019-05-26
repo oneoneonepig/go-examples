@@ -16,6 +16,8 @@ rm -f $PROTOC_ZIP
 ```
 cd $GOPATH/src/google.golang.org/grpc/examples/helloworld
 protoc -I helloworld/ helloworld/helloworld.proto --go_out=plugins=grpc:helloworld
+# or
+sudo apt install golang-google-grpc-dev
 ```
 
 # Start server
