@@ -27,7 +27,7 @@ import (
         "time"
 
         "google.golang.org/grpc"
-        pb "google.golang.org/grpc/examples/helloworld/helloworld"
+        pb "github.com/oneoneonepig/go-examples/helloworld/helloworld"
 )
 
 /*
