@@ -58,7 +58,7 @@ type server struct{}
 
 // SayHello implements helloworld.GreeterServer
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-        log.Printf("Received: %v from %v", in.Name, in.Hostname)
+        log.Printf("Received: %v, from %v", in.Name, in.Hostname)
         hostname, err := os.Hostname()
         if err != nil {
                 log.Fatalf("could not detect hostname: %v", err)

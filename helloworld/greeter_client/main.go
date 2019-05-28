@@ -73,5 +73,5 @@ func main() {
         if err != nil {
                 log.Fatalf("could not greet: %v", err)
         }
-        log.Printf("Reply: %s from %s, node: %s, pod: %s", r.Message, r.Hostname, r.NodeName, r.PodName)
+        log.Printf("Reply: %s, from %s, node: %s, pod: %s", r.Message, r.Hostname, r.NodeName, r.PodName)
 }
