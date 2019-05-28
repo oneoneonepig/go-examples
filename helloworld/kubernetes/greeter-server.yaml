@@ -1,0 +1,42 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: greeter-server
+spec:
+  selector:
+    app: greeter-server 
+  ports:
+  - protocol: TCP
+    port: 3000
+    targetPort: 3000
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeter-server
+  labels:
+    app: greeter-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: greeter-server
+  template:
+    metadata:
+      labels:
+        app: greeter-server
+    spec:
+      containers:
+      - name: greeter-server
+        image: oneoneonepig/greeter:v1
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
