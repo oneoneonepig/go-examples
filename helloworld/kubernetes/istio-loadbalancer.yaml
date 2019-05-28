@@ -1,0 +1,23 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: greeter-server
+  namespace: greeter
+spec:
+  hosts:
+  - greeter-server
+  http:
+  - route:
+    - destination:
+        host: greeter-server
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: greeter-server
+  namespace: greeter
+spec:
+  host: greeter-server
+  trafficPolicy:
+    loadBalancer:
+      simple: RANDOM

@@ -69,9 +69,27 @@ curl localhost:8080
 git clone https://github.com/oneoneonepig/go-examples.git
 cd go-examples/helloworld/kubernetes
 
-kubectl apply -f namespace.yaml
-kubectl apply -f .
+kubectl create namespace greeter
+kubectl apply -f greeter-server.yaml
+kubectl apply -f greeter-client.yaml
 
 # (Optional) Change frontend service type to LoadBalancer
 kubectl patch svc -n greeter greeter-client -p '{"spec":{"type":"LoadBalancer"}}'
 ```
+
+## Run in Kubernetes, using Istio load balancer
+```
+git clone https://github.com/oneoneonepig/go-examples.git
+cd go-examples/helloworld/kubernetes
+
+kubectl create namespace greeter
+kubectl label namespace greeter istio-injection=enabled
+
+kubectl apply -f greeter-server.yaml
+kubectl apply -f greeter-client.yaml
+kubectl apply -f istio-loadbalancer.yaml
+
+# (Optional) Change frontend service type to LoadBalancer
+kubectl patch svc -n greeter greeter-client -p '{"spec":{"type":"LoadBalancer"}}'
+```
+
