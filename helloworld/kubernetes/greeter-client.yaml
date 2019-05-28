@@ -7,6 +7,7 @@ metadata:
 spec:
   selector:
     app: greeter-client
+    version: v1.1
   ports:
   - protocol: TCP
     port: 8080
@@ -20,15 +21,18 @@ metadata:
   namespace: greeter
   labels:
     app: greeter-client
+    version: v1.1
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: greeter-client
+      version: v1.1
   template:
     metadata:
       labels:
         app: greeter-client
+        version: v1.1
     spec:
       containers:
       - name: greeter-client

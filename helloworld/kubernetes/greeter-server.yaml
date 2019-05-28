@@ -9,7 +9,7 @@ spec:
     app: greeter-server 
   ports:
   - protocol: TCP
-    name: grpc
+    name: grpc-port
     port: 3000
     targetPort: 3000
   type: ClusterIP
@@ -21,15 +21,18 @@ metadata:
   namespace: greeter
   labels:
     app: greeter-server
+    version: v1.1
 spec:
   replicas: 4
   selector:
     matchLabels:
       app: greeter-server
+      version: v1.1
   template:
     metadata:
       labels:
         app: greeter-server
+        version: v1.1
     spec:
       containers:
       - name: greeter-server
