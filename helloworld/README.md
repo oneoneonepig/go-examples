@@ -47,7 +47,8 @@ cd go-examples/helloworld
 docker build -t greeter:v1 .
 
 docker run -d --name greeter-srv greeter:v1
-docker run -d -p 8080:8080 --name greeter-clt greeter:v1 /go/bin/greeter_client -host <greeter-srv address>
+docker run -d -p 8080:8080 --name greeter-clt greeter:v1 /go/bin/greeter_client -host $(docker inspect --format='{{.NetworkSettings.IPAddress}}' greeter-srv) 
+
 curl localhost:8080
 
 ```
