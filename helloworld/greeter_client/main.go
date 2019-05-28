@@ -85,5 +85,9 @@ func main() {
 		json.NewEncoder(w).Encode(fr)
 	})
 
-	log.Fatal(http.ListenAndServe(":"+listenPort, nil))
+	err := http.ListenAndServe(":"+listenPort, nil)
+	if err != nil {
+		log.Fatal("ListenAndServe: ", err)
+		os.Exit(1)
+	}
 }

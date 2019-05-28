@@ -71,10 +71,12 @@ func main() {
         lis, err := net.Listen("tcp", host+":"+port)
         if err != nil {
                 log.Fatalf("failed to listen: %v", err)
+		os.Exit(1)
         }
         s := grpc.NewServer()
         pb.RegisterGreeterServer(s, &server{})
         if err := s.Serve(lis); err != nil {
                 log.Fatalf("failed to serve: %v", err)
+		os.Exit(2)
         }
 }
