@@ -3,6 +3,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: greeter-server
+  namespace: greeter
 spec:
   selector:
     app: greeter-server 
@@ -16,10 +17,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: greeter-server
+  namespace: greeter
   labels:
     app: greeter-server
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: greeter-server
@@ -30,7 +32,7 @@ spec:
     spec:
       containers:
       - name: greeter-server
-        image: oneoneonepig/greeter:v1
+        image: oneoneonepig/greeter:v1.1
         env:
         - name: NODE_NAME
           valueFrom:

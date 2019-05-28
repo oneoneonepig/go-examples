@@ -69,8 +69,8 @@ curl localhost:8080
 git clone https://github.com/oneoneonepig/go-examples.git
 cd go-examples/helloworld/kubernetes
 
-kubectl create namespace greeter
-kubectl apply -n greeter -f .
+kubectl apply -f namespace.yaml
+kubectl apply -f .
 
 # (Optional) Change frontend service type to LoadBalancer
 kubectl patch svc -n greeter greeter-client -p '{"spec":{"type":"LoadBalancer"}}'

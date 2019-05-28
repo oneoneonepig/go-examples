@@ -3,6 +3,7 @@ kind: Service
 apiVersion: v1
 metadata:
   name: greeter-client
+  namespace: greeter
 spec:
   selector:
     app: greeter-client
@@ -16,6 +17,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: greeter-client
+  namespace: greeter
   labels:
     app: greeter-client
 spec:
@@ -30,7 +32,7 @@ spec:
     spec:
       containers:
       - name: greeter-client
-        image: oneoneonepig/greeter:v1
+        image: oneoneonepig/greeter:v1.1
         command:
         - /go/bin/greeter_client
         args:
