@@ -43,6 +43,7 @@ var (
 func init() {
         flag.StringVar(&host, "host", "0.0.0.0", "Listening address")
         flag.StringVar(&port, "port", "3000", "Listening port")
+        flag.Parse()
         nodeName = os.Getenv("NODE_NAME")
         podName = os.Getenv("POD_NAME")
 	if len(nodeName) == 0 {
@@ -67,7 +68,6 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 }
 
 func main() {
-        flag.Parse()
         lis, err := net.Listen("tcp", host+":"+port)
         if err != nil {
                 log.Fatalf("failed to listen: %v", err)
