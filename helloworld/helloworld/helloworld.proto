@@ -36,4 +36,6 @@ message HelloRequest {
 message HelloReply {
   string message = 1;
   string hostname = 2;
+  string podName = 3;
+  string nodeName = 4;
 }

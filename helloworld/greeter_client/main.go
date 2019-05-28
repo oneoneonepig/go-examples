@@ -46,7 +46,7 @@ var (
 // Initialize listen port and address
 func init() {
         flag.StringVar(&host, "host", "0.0.0.0", "help message for host")
-        flag.StringVar(&port, "port", "32123", "help message for port")
+        flag.StringVar(&port, "port", "3000", "help message for port")
         flag.StringVar(&message, "message", "world", "help message for message")
 }
 
@@ -73,5 +73,5 @@ func main() {
         if err != nil {
                 log.Fatalf("could not greet: %v", err)
         }
-        log.Printf("Reply: %s from %s", r.Message, r.Hostname)
+        log.Printf("Reply: %s from %s, node: %s, pod: %s", r.Message, r.Hostname, r.NodeName, r.PodName)
 }

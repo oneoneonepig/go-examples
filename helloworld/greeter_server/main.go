@@ -35,12 +35,22 @@ import (
 var (
         host string
         port string
+	nodeName string
+	podName string
 )
 
 // Initialize listen port and address
 func init() {
-        flag.StringVar(&host, "host", "0.0.0.0", "help message for host")
-        flag.StringVar(&port, "port", "32123", "help message for port")
+        flag.StringVar(&host, "host", "0.0.0.0", "Listening address")
+        flag.StringVar(&port, "port", "3000", "Listening port")
+        nodeName = os.Getenv("NODE_NAME")
+        podName = os.Getenv("POD_NAME")
+	if len(nodeName) == 0 {
+		nodeName = "NULL"
+	}
+	if len(podName) == 0 {
+		podName = "NULL"
+	}
 }
 
 // server is used to implement helloworld.GreeterServer.
@@ -53,7 +63,7 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
         if err != nil {
                 log.Fatalf("could not detect hostname: %v", err)
         }
-        return &pb.HelloReply{Message: "Hello " + in.Name, Hostname: hostname}, nil
+        return &pb.HelloReply{Message: "Hello " + in.Name, Hostname: hostname, NodeName: nodeName, PodName: podName}, nil
 }
 
 func main() {
