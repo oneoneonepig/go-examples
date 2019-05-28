@@ -1,5 +1,9 @@
 ## Reference
-https://grpc.io/docs/quickstart/go/
+* https://grpc.io/docs/quickstart/go/
+* https://medium.com/getamis/istio-基礎-grpc-負載均衡-d4be0d49ee07
+* https://istio.io/docs/reference/config/networking/v1alpha3/virtual-service/
+* https://medium.com/pismolabs/istio-envoy-grpc-metrics-winning-with-service-mesh-in-practice-d67a08acd8f7
+* https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/grpc
 
 ## Get gRPC
 ```
@@ -45,7 +49,7 @@ go run ./greeter_client/main.go
 git clone https://github.com/oneoneonepig/go-examples.git
 cd go-examples/helloworld
 
-TAG=v1
+TAG=v1.1
 docker build -t greeter:$TAG .
 docker tag greeter:$TAG oneoneonepig/greeter:$TAG
 docker push oneoneonepig/greeter:$TAG
@@ -87,9 +91,16 @@ kubectl label namespace greeter istio-injection=enabled
 
 kubectl apply -f greeter-server.yaml
 kubectl apply -f greeter-client.yaml
+
+# Additional load balancing configuration, e.g. RANDOM selecting backend instead of default ROUND_ROBIN
 kubectl apply -f istio-loadbalancer.yaml
 
 # (Optional) Change frontend service type to LoadBalancer
 kubectl patch svc -n greeter greeter-client -p '{"spec":{"type":"LoadBalancer"}}'
+```
+
+## Clean up
+```
+kubectl delete namespace greeter
 ```
 
