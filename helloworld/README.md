@@ -40,14 +40,25 @@ go run ./greeter_server/main.go
 go run ./greeter_client/main.go
 ```
 
-## Containerize
+## Build and push to Docker Hub
 ```
 git clone https://github.com/oneoneonepig/go-examples.git
 cd go-examples/helloworld
-docker build -t greeter:v1 .
 
-docker run -d --name greeter-srv greeter:v1
-docker run -d -p 8080:8080 --name greeter-clt greeter:v1 /go/bin/greeter_client -host $(docker inspect --format='{{.NetworkSettings.IPAddress}}' greeter-srv) 
+TAG=v1
+docker build -t greeter:$TAG .
+docker tag greeter:$TAG oneoneonepig/greeter:$TAG
+docker push oneoneonepig/greeter:$TAG
+```
+
+## Run in local Docker container
+```
+git clone https://github.com/oneoneonepig/go-examples.git
+cd go-examples/helloworld
+docker build -t greeter:test .
+
+docker run -d --name greeter-srv greeter:test
+docker run -d -p 8080:8080 --name greeter-clt greeter:test /go/bin/greeter_client -host $(docker inspect --format='{{.NetworkSettings.IPAddress}}' greeter-srv) 
 
 curl localhost:8080
 
