@@ -3,6 +3,7 @@
 * https://medium.com/getamis/istio-基礎-grpc-負載均衡-d4be0d49ee07
 * https://istio.io/docs/reference/config/networking/v1alpha3/virtual-service/
 * https://medium.com/pismolabs/istio-envoy-grpc-metrics-winning-with-service-mesh-in-practice-d67a08acd8f7
+* https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/grpc
 
 ## Get gRPC
 ```
@@ -90,6 +91,8 @@ kubectl label namespace greeter istio-injection=enabled
 
 kubectl apply -f greeter-server.yaml
 kubectl apply -f greeter-client.yaml
+
+# Additional load balancing configuration, e.g. RANDOM selecting backend instead of default ROUND_ROBIN
 kubectl apply -f istio-loadbalancer.yaml
 
 # (Optional) Change frontend service type to LoadBalancer
