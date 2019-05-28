@@ -22,30 +22,30 @@
 package main
 
 import (
-        "context"
-        "flag"
-        "log"
-        "net"
-        "os"
+	"context"
+	"flag"
+	"log"
+	"net"
+	"os"
 
-        "google.golang.org/grpc"
-        pb "github.com/oneoneonepig/go-examples/helloworld/helloworld"
+	pb "github.com/oneoneonepig/go-examples/helloworld/helloworld"
+	"google.golang.org/grpc"
 )
 
 var (
-        host string
-        port string
+	host     string
+	port     string
 	nodeName string
-	podName string
+	podName  string
 )
 
 // Initialize listen port and address
 func init() {
-        flag.StringVar(&host, "host", "0.0.0.0", "Listening address")
-        flag.StringVar(&port, "port", "3000", "Listening port")
-        flag.Parse()
-        nodeName = os.Getenv("NODE_NAME")
-        podName = os.Getenv("POD_NAME")
+	flag.StringVar(&host, "host", "0.0.0.0", "Listening address")
+	flag.StringVar(&port, "port", "3000", "Listening port")
+	flag.Parse()
+	nodeName = os.Getenv("NODE_NAME")
+	podName = os.Getenv("POD_NAME")
 	if len(nodeName) == 0 {
 		nodeName = "NULL"
 	}
@@ -59,24 +59,24 @@ type server struct{}
 
 // SayHello implements helloworld.GreeterServer
 func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
-        log.Printf("Received: %v, from %v", in.Name, in.Hostname)
-        hostname, err := os.Hostname()
-        if err != nil {
-                log.Fatalf("could not detect hostname: %v", err)
-        }
-        return &pb.HelloReply{Message: "Hello " + in.Name, Hostname: hostname, NodeName: nodeName, PodName: podName}, nil
+	log.Printf("Received: %v, from %v", in.Name, in.Hostname)
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Fatalf("could not detect hostname: %v", err)
+	}
+	return &pb.HelloReply{Message: "Hello " + in.Name, Hostname: hostname, NodeName: nodeName, PodName: podName}, nil
 }
 
 func main() {
-        lis, err := net.Listen("tcp", host+":"+port)
-        if err != nil {
-                log.Fatalf("failed to listen: %v", err)
+	lis, err := net.Listen("tcp", host+":"+port)
+	if err != nil {
+		log.Fatalf("failed to listen: %v", err)
 		os.Exit(1)
-        }
-        s := grpc.NewServer()
-        pb.RegisterGreeterServer(s, &server{})
-        if err := s.Serve(lis); err != nil {
-                log.Fatalf("failed to serve: %v", err)
+	}
+	s := grpc.NewServer()
+	pb.RegisterGreeterServer(s, &server{})
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
 		os.Exit(2)
-        }
+	}
 }
