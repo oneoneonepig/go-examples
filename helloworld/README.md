@@ -63,3 +63,15 @@ docker run -d -p 8080:8080 --name greeter-clt greeter:test /go/bin/greeter_clien
 curl localhost:8080
 
 ```
+
+## Run in Kubernetes
+```
+git clone https://github.com/oneoneonepig/go-examples.git
+cd go-examples/helloworld/kubernetes
+
+kubectl create namespace greeter
+kubectl apply -n greeter -f .
+
+# (Optional) Change frontend service type to LoadBalancer
+kubectl patch svc -n greeter greeter-client -p '{"spec":{"type":"LoadBalancer"}}'
+```
