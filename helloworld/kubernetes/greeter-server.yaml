@@ -49,3 +49,40 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: greeter-server-1.2
+  namespace: greeter
+  labels:
+    app: greeter-server
+    version: v1.2
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: greeter-server
+      version: v1.2
+  template:
+    metadata:
+      labels:
+        app: greeter-server
+        version: v1.2
+    spec:
+      containers:
+      - name: greeter-server
+        image: oneoneonepig/greeter:v1.1
+        ports:
+        - containerPort: 3000
+          name: grpc-port
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: POD_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+
