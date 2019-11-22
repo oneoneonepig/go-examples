@@ -4,56 +4,57 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="static/all.css">
     <title>Counter</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="static/counter_api.js"></script>
 </head>
 <body class="text-center">
 
-<main role="main" class="inner cover">
-    <h2 class="cover-heading" style="margin-top: 200px;" id="counter">Counter</h2>
-    <button type="button" class="btn btn-outline-primary" onclick="get()">GET</button>
-    <button type="button" class="btn btn-outline-primary" onclick="incr()">INCR</button>
-    <button type="button" class="btn btn-outline-primary" onclick="del()">DEL</button>
+<main role="main" class="container inner cover">
+
+    <h2 class="cover-heading mb-4" style="margin-top: 250px;" id="counterMessage">Counter</h2>
+
+    <div class="input-group mb-4 justify-content-md-center" >
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">@</span>
+            <input type="text" id="inputKeyName" class="form-control" name="keyName" placeholder="Key Name" aria-label="InputKeyName" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">@</span>
+            <input type="number" id="inputValue" class="form-control" name="value" placeholder="Value" aria-label="InputValue" aria-describedby="basic-addon1">
+        </div>
+    </div>
+
+    <div class="container mb-3">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" id="buttonGet" class="btn btn-outline-primary" onclick="get()">GET</button>
+            <button type="button" id="buttonSet" class="btn btn-outline-primary" onclick="set()">SET</button>
+            <button type="button" id="buttonIncr" class="btn btn-outline-primary" onclick="incr()">INCR</button>
+            <button type="button" id="buttonDel" class="btn btn-outline-primary" onclick="del()">DEL</button>
+        </div>
+    </div>
+    <div class="container mb-3">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" id="buttonGetAll" class="btn btn-outline-primary" onclick="getAll()">GET ALL</button>
+            <button type="button" id="buttonDelAll" class="btn btn-outline-primary" onclick="delAll()">DEL ALL</button>
+        </div>
+    </div>
+    <div class="container mb-3">
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" id="buttonClearAll" class="btn btn-outline-primary" onclick="cleanUp()">CLEAR</button>
+        </div>
+    </div>
+
+    <div class="container mb-4 cover-heading" id="responseDump">
+    </div>
+
 </main>
 
-<!--<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script> -->
-<script src="https://code.jquery.com/jquery-3.4.1.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
-<script>
-    function get() {
-        var settings = {
-            "url": "http://localhost:8080/counter",
-            "method": "GET",
-        }
-
-        $.ajax(settings).done(function (response) {
-            console.log(response);
-            $('#counter').text(response.counter);
-        });
-    }
-    function incr() {
-        var settings = {
-            "url": "http://localhost:8080/counter",
-            "method": "POST",
-        }
-
-        $.ajax(settings).done(function (response) {
-            console.log(response);
-            $('#counter').text(response.counter);
-        });
-    }
-    function del(){
-        var settings = {
-            "url": "http://localhost:8080/counter",
-            "method": "DELETE",
-        }
-
-        $.ajax(settings).done(function (response) {
-            console.log(response);
-            $('#counter').text(response.counter);
-        });
-    }
-</script>
 </body>
 </html>
+
+
+

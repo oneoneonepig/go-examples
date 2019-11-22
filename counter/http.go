@@ -17,20 +17,21 @@ var (
 func main() {
 	// Create router
 	r := mux.NewRouter()
-	
-	r.HandleFunc("/", Homepage).Methods(http.MethodGet)
 
-	rc := r.PathPrefix("/counter").Subrouter()
-	rc.HandleFunc("", Retrieve).Methods(http.MethodGet)
-	rc.HandleFunc("", Increase).Methods(http.MethodPost)
-	rc.HandleFunc("", Delete).Methods(http.MethodDelete)
-	rc.HandleFunc("", OptionForCORS).Methods(http.MethodOptions)
+	r.HandleFunc("/", Homepage).Methods(http.MethodGet)
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	r.HandleFunc("/keys", GetAllKeys).Methods(http.MethodGet)
+	r.HandleFunc("/keys", DeleteAllKeys).Methods(http.MethodDelete)
+	r.HandleFunc("/key/{key}", GetKey).Methods(http.MethodGet)
+	r.HandleFunc("/key/{key}/{value:[0-9]+}", SetKey).Methods(http.MethodPost)
+	r.HandleFunc("/key/{key}", DeleteKey).Methods(http.MethodDelete)
+	r.HandleFunc("/", OptionForCORS).Methods(http.MethodOptions)
 
 	/*
 	r.HandleFunc("/counter", Retrieve).Methods(http.MethodGet)
 	r.HandleFunc("/counter", Increase).Methods(http.MethodPost)
 	r.HandleFunc("/counter", Delete).Methods(http.MethodDelete)
-	r.HandleFunc("/counter", OptionForCORS).Methods(http.MethodOptions)
+
 	*/
 
 	// Create redis connection
