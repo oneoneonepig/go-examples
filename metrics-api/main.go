@@ -7,7 +7,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 
-	_ "metrics-api/docs"
+	_ "github.com/oneoneonepig/go-examples/metrics-api/docs"
 )
 
 // @title Simple API for metric collecting

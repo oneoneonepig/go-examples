@@ -1,4 +1,4 @@
-module simple-api
+module github.com/oneoneonepig/go-examples/metrics-api
 
 go 1.14
 
