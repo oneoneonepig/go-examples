@@ -8,8 +8,8 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 	"go.elastic.co/apm/module/apmgin"
-	"os"
 	"io"
+	"os"
 )
 
 // @title Simple API for metric collecting
@@ -31,7 +31,7 @@ func main() {
 
 	r := gin.New()
 	r.Use(apmgin.Middleware(r)) // Middleware for APM Server
-	r.Use(cors.Default()) // CORS settings
+	r.Use(cors.Default())       // CORS settings
 
 	url := ginSwagger.URL("/swagger/doc.json")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))

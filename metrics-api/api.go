@@ -108,14 +108,20 @@ func sleep(c *gin.Context) {
 func connect(c *gin.Context) {
 	//
 	ctx := c.Request.Context()
+	correlationId := c.GetHeader("X-Correlation-Id")
 
 	// Declare span - global
 	spanGlobal, ctx := apm.StartSpan(ctx, "connect", "custom")
+	spanGlobal.Context.SetLabel("X-Correlation-Id", correlationId)
 
 	// Retrieve page
 	page := c.Query("page")
 	start := time.Now()
-	resp, err := http.Get(page)
+	client := &http.Client{}
+	req, _ := http.NewRequest("GET", page, nil)
+	req.Header.Set("X-Correlation-Id", correlationId)
+	resp, err := client.Do(req)
+
 	defer resp.Body.Close()
 	end := time.Now()
 	elapsed := end.Sub(start)
@@ -138,9 +144,11 @@ func connect(c *gin.Context) {
 func connect2(c *gin.Context) {
 	//
 	ctx := c.Request.Context()
+	correlationId := c.GetHeader("X-Correlation-Id")
 
 	// Declare span - global
 	spanGlobal, ctx := apm.StartSpan(ctx, "connect2", "custom")
+	spanGlobal.Context.SetLabel("X-Correlation-Id", correlationId)
 
 	// Retrieve pages
 	page1 := c.Query("page1")
@@ -148,40 +156,52 @@ func connect2(c *gin.Context) {
 
 	// Declare span - page1
 	spanPage1, ctx := apm.StartSpan(ctx, "page1", "custom")
+	spanPage1.Context.SetLabel("X-Correlation-Id", correlationId)
 
 	// Connect to first page
-	start := time.Now()
-	resp, err := http.Get(page1)
-	defer resp.Body.Close()
-	end := time.Now()
-	elapsed := end.Sub(start)
+	start1 := time.Now()
+	client1 := &http.Client{}
+	req1, _ := http.NewRequest("GET", page1, nil)
+	req1.Header.Set("X-Correlation-Id", correlationId)
+	resp1, err := client1.Do(req1)
+
+	defer resp1.Body.Close()
+	end1 := time.Now()
+	elapsed1 := end1.Sub(start1)
 	if err != nil {
-		c.JSON(resp.StatusCode, gin.H{
+		c.JSON(resp1.StatusCode, gin.H{
 			"message": err,
 		})
 		return
 	}
-	message := "Connecting to " + page1 + " spent " + elapsed.Truncate(time.Millisecond).String()
+	message := "Connecting to " + page1 + " spent " + elapsed1.Truncate(time.Millisecond).String()
 
 	// End span - page1
 	spanPage1.End()
 
 	// Declare span - page2
 	spanPage2, ctx := apm.StartSpan(ctx, "page2", "custom")
+	spanPage2.Context.SetLabel("X-Correlation-Id", correlationId)
 
 	// Connect to second page
-	start = time.Now()
-	resp, err = http.Get(page1)
-	defer resp.Body.Close()
-	end = time.Now()
-	elapsed = end.Sub(start)
+	start2 := time.Now()
+	client2 := &http.Client{}
+	req2, _ := http.NewRequest("GET", page2, nil)
+	//	if len(correlationId) > 0 {
+	req2.Header.Set("X-Correlation-Id", correlationId)
+	//	}
+	resp2, err := client2.Do(req2)
+
+	defer resp2.Body.Close()
+	end2 := time.Now()
+	elapsed2 := end2.Sub(start2)
 	if err != nil {
-		c.JSON(resp.StatusCode, gin.H{
+		c.JSON(resp2.StatusCode, gin.H{
 			"message": err,
 		})
 		return
 	}
-	message += "\nConnecting to " + page2 + " spent " + elapsed.Truncate(time.Millisecond).String()
+	message += "\nConnecting to " + page2 + " spent " + elapsed2.Truncate(time.Millisecond).String()
 
 	// End span - page2
 	spanPage2.End()
