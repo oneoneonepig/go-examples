@@ -2,8 +2,8 @@ package main
 
 import (
 	//"github.com/gin-contrib/cors"
-	cors "github.com/rs/cors/wrapper/gin"
 	"github.com/gin-gonic/gin"
+	cors "github.com/rs/cors/wrapper/gin"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
 
@@ -29,6 +29,9 @@ func main() {
 	r.GET("/metrics", getMetrics)
 	r.GET("/error", makeError)
 	r.GET("/repair", repair)
+
+	r.GET("/sleep/:duration", sleep)
+	r.GET("/connect", connect)
 
 	r.Run()
 }

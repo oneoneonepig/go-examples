@@ -3,6 +3,10 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"math/rand"
+	"time"
+	"strconv"
+	"net/http"
+	//"fmt"
 )
 
 type Metrics struct {
@@ -79,3 +83,43 @@ func repair(c *gin.Context) {
 		"message": "error repaired, hooray!",
 	})
 }
+
+// @Summary Sleep for N seconds
+// @Produce json
+// @Router /sleep [get]
+func sleep(c *gin.Context) {
+	durationString := c.Param("duration")
+	durationInt, err := strconv.Atoi(durationString)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"message": "Cannot convert to integer.",
+		})
+		return
+	}
+	time.Sleep(time.Duration(durationInt) * time.Second)
+	message := "Slept for " + durationString + " seconds."
+	c.String(200, message)
+}
+
+// @Summary Connect to a web page
+// @Produce json
+// @Router /connect [get]
+func connect(c *gin.Context) {
+	page := c.Query("page")
+	//fmt.Println(page)
+	//resp, err := http.Get(page)
+	start := time.Now()
+	_, err := http.Get(page)
+	end := time.Now()
+	elapsed := end.Sub(start)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"message": err,
+		})
+		return
+	}
+	// time.Sleep(time.Duration(durationInt) * time.Second)
+	message := "Connecting to " + page + " spent " + elapsed.Truncate(time.Millisecond).String()
+	c.String(200, message)
+}
+
