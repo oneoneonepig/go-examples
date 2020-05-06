@@ -1,12 +1,13 @@
 package main
 
 import (
+	//"fmt"
 	"github.com/gin-gonic/gin"
 	"math/rand"
-	"time"
-	"strconv"
 	"net/http"
-	//"fmt"
+	"strconv"
+	"time"
+	"go.elastic.co/apm"
 )
 
 type Metrics struct {
@@ -106,20 +107,75 @@ func sleep(c *gin.Context) {
 // @Router /connect [get]
 func connect(c *gin.Context) {
 	page := c.Query("page")
-	//fmt.Println(page)
-	//resp, err := http.Get(page)
 	start := time.Now()
-	_, err := http.Get(page)
+	resp, err := http.Get(page)
 	end := time.Now()
 	elapsed := end.Sub(start)
 	if err != nil {
-		c.JSON(200, gin.H{
+		c.JSON(resp.StatusCode, gin.H{
 			"message": err,
 		})
 		return
 	}
-	// time.Sleep(time.Duration(durationInt) * time.Second)
 	message := "Connecting to " + page + " spent " + elapsed.Truncate(time.Millisecond).String()
-	c.String(200, message)
+	c.String(resp.StatusCode, message)
 }
 
+// @Summary Connect to two web pages
+// @Produce json
+// @Router /connect2 [get]
+func connect2(c *gin.Context) {
+
+	ctx := c.Request.Context()
+
+	// Declare span - global
+	spanGlobal, ctx := apm.StartSpan(ctx, "connect2", "custom")
+
+	// Retrieve pages
+	page1 := c.Query("page1")
+	page2 := c.Query("page2")
+
+	// Declare span - page1
+	spanPage1, ctx := apm.StartSpan(ctx, "page1", "custom")
+
+	// Connect to first page
+	start := time.Now()
+	resp, err := http.Get(page1)
+	end := time.Now()
+	elapsed := end.Sub(start)
+	if err != nil {
+		c.JSON(resp.StatusCode, gin.H{
+			"message": err,
+		})
+		return
+	}
+	message := "Connecting to " + page1 + " spent " + elapsed.Truncate(time.Millisecond).String()
+
+	// End span - page1
+	spanPage1.End()
+
+	// Declare span - page2
+	spanPage2, ctx := apm.StartSpan(ctx, "page2", "custom")
+
+	// Connect to second page
+	start = time.Now()
+	resp, err = http.Get(page1)
+	end = time.Now()
+	elapsed = end.Sub(start)
+	if err != nil {
+		c.JSON(resp.StatusCode, gin.H{
+			"message": err,
+		})
+		return
+	}
+	message += "\nConnecting to " + page2 + " spent " + elapsed.Truncate(time.Millisecond).String()
+
+	// End span - page2
+	spanPage2.End()
+
+	// Return results
+	c.String(200, message)
+
+	// End span - global
+	spanGlobal.End()
+}

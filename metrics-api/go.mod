@@ -14,7 +14,8 @@ require (
 	github.com/swaggo/files v0.0.0-20190704085106-630677cd5c14
 	github.com/swaggo/gin-swagger v1.2.0
 	github.com/swaggo/swag v1.5.1
-	go.elastic.co/apm v1.7.2 // indirect
-	golang.org/x/sys v0.0.0-20200413165638-669c56c373c4 // indirect
-	howett.net/plist v0.0.0-20200225050739-77e249a2e2ba // indirect
+	go.elastic.co/apm v1.8.0
+	go.elastic.co/apm/module/apmgin v1.8.0
+	golang.org/x/sys v0.0.0-20200501145240-bc7a7d42d5c3 // indirect
+	howett.net/plist v0.0.0-20200419221736-3b63eb3a43b5 // indirect
 )
