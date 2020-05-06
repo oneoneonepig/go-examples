@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.elastic.co/apm"
 	"math/rand"
@@ -145,7 +145,10 @@ func connect2(c *gin.Context) {
 	//
 	ctx := c.Request.Context()
 	correlationId := c.GetHeader("X-Correlation-Id")
-
+	if correlationId == "" {
+		traceId := apm.TransactionFromContext(ctx).TraceContext().Trace
+		correlationId = fmt.Sprint(traceId)
+	}
 	// Declare span - global
 	spanGlobal, ctx := apm.StartSpan(ctx, "connect2", "custom")
 	spanGlobal.Context.SetLabel("X-Correlation-Id", correlationId)
