@@ -3,11 +3,11 @@ package main
 import (
 	//"fmt"
 	"github.com/gin-gonic/gin"
+	"go.elastic.co/apm"
 	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
-	"go.elastic.co/apm"
 )
 
 type Metrics struct {
@@ -109,6 +109,7 @@ func connect(c *gin.Context) {
 	page := c.Query("page")
 	start := time.Now()
 	resp, err := http.Get(page)
+	defer resp.Body.Close()
 	end := time.Now()
 	elapsed := end.Sub(start)
 	if err != nil {
@@ -141,6 +142,7 @@ func connect2(c *gin.Context) {
 	// Connect to first page
 	start := time.Now()
 	resp, err := http.Get(page1)
+	defer resp.Body.Close()
 	end := time.Now()
 	elapsed := end.Sub(start)
 	if err != nil {
@@ -160,6 +162,7 @@ func connect2(c *gin.Context) {
 	// Connect to second page
 	start = time.Now()
 	resp, err = http.Get(page1)
+	defer resp.Body.Close()
 	end = time.Now()
 	elapsed = end.Sub(start)
 	if err != nil {
