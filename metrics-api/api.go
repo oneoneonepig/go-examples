@@ -106,6 +106,13 @@ func sleep(c *gin.Context) {
 // @Produce json
 // @Router /connect [get]
 func connect(c *gin.Context) {
+	//
+	ctx := c.Request.Context()
+
+	// Declare span - global
+	spanGlobal, ctx := apm.StartSpan(ctx, "connect", "custom")
+
+	// Retrieve page
 	page := c.Query("page")
 	start := time.Now()
 	resp, err := http.Get(page)
@@ -120,13 +127,16 @@ func connect(c *gin.Context) {
 	}
 	message := "Connecting to " + page + " spent " + elapsed.Truncate(time.Millisecond).String()
 	c.String(resp.StatusCode, message)
+
+	// End span - global
+	spanGlobal.End()
 }
 
 // @Summary Connect to two web pages
 // @Produce json
 // @Router /connect2 [get]
 func connect2(c *gin.Context) {
-
+	//
 	ctx := c.Request.Context()
 
 	// Declare span - global

@@ -7,8 +7,9 @@ import (
 	cors "github.com/rs/cors/wrapper/gin"
 	swaggerFiles "github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
-
 	"go.elastic.co/apm/module/apmgin"
+	"os"
+	"io"
 )
 
 // @title Simple API for metric collecting
@@ -22,9 +23,15 @@ import (
 // @BasePath /v2
 func main() {
 
+	gin.DisableConsoleColor()
+	f, _ := os.Create("gin.log")
+	gin.DefaultWriter = io.MultiWriter(f)
+
+	gin.SetMode(gin.ReleaseMode)
+
 	r := gin.New()
-	r.Use(apmgin.Middleware(r))
-	r.Use(cors.Default())
+	r.Use(apmgin.Middleware(r)) // Middleware for APM Server
+	r.Use(cors.Default()) // CORS settings
 
 	url := ginSwagger.URL("/swagger/doc.json")
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, url))
