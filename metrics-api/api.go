@@ -1,10 +1,9 @@
 package main
 
 import (
-	"encoding/hex"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"go.elastic.co/apm"
+	"github.com/opentracing/opentracing-go"
+	"go.elastic.co/apm/module/apmot"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -107,46 +106,17 @@ func sleep(c *gin.Context) {
 // @Produce json
 // @Router /connect [get]
 func connect(c *gin.Context) {
-	//
+	// Retrieve the original context
 	ctx := c.Request.Context()
-	correlationId := c.GetHeader("X-Correlation-Id")
 
 	// Declare span - global
-	// If X-Correlation-Id header is set, initialize with Trace ID
-	// If empty, use the new Trace ID as correlationId
-	var spanGlobal *apm.Span
-	if correlationId != "" {
-		var traceId apm.TraceID
-		correlationIdSlice, err := hex.DecodeString(correlationId)
-		if err != nil {
-			panic(err)
-		}
-		copy(traceId[:16], correlationIdSlice[:16])
-		err = traceId.Validate()
-		if err != nil {
-			panic(err)
-		}
-		// fmt.Printf("%s is a %T\n", traceId, traceId)
-		spanOptions := apm.SpanOptions{
-			Parent: apm.TraceContext{
-				Trace: traceId,
-			},
-		}
-		spanGlobal, ctx = apm.StartSpanOptions(ctx, "connect", "custom", spanOptions)
-	} else {
-		spanGlobal, ctx = apm.StartSpan(ctx, "connect", "custom")
-		traceId := apm.TransactionFromContext(ctx).TraceContext().Trace
-		correlationId = fmt.Sprint(traceId)
-	}
-
-	spanGlobal.Context.SetLabel("X-Correlation-Id", correlationId)
+	spanGlobal, ctx := opentracing.StartSpanFromContext(ctx, "global")
 
 	// Retrieve page
 	page := c.Query("page")
 	start := time.Now()
 	client := &http.Client{}
 	req, _ := http.NewRequest("GET", page, nil)
-	req.Header.Set("X-Correlation-Id", correlationId)
 	resp, err := client.Do(req)
 
 	defer resp.Body.Close()
@@ -162,39 +132,41 @@ func connect(c *gin.Context) {
 	c.String(resp.StatusCode, message)
 
 	// End span - global
-	spanGlobal.End()
+	spanGlobal.Finish()
 }
 
 // @Summary Connect to two web pages
 // @Produce json
 // @Router /connect2 [get]
 func connect2(c *gin.Context) {
-	//
+	// Retrieve the original context
 	ctx := c.Request.Context()
-	correlationId := c.GetHeader("X-Correlation-Id")
 
-	// Set X-Correlation-Id to Trace ID if set, leave it empty otherwise
-	if correlationId == "" {
-		traceId := apm.TransactionFromContext(ctx).TraceContext().Trace
-		correlationId = fmt.Sprint(traceId)
-	}
+	// Use Elastic APM library
+	opentracing.SetGlobalTracer(apmot.New())
+
 	// Declare span - global
-	spanGlobal, ctx := apm.StartSpan(ctx, "connect2", "custom")
-	spanGlobal.Context.SetLabel("X-Correlation-Id", correlationId)
+	spanGlobal, ctx := opentracing.StartSpanFromContext(ctx, "global")
+	//spanGlobal, ctx := apm.StartSpan(ctx, "connect2", "custom")
 
 	// Retrieve pages
 	page1 := c.Query("page1")
 	page2 := c.Query("page2")
 
 	// Declare span - page1
-	spanPage1, ctx := apm.StartSpan(ctx, "page1", "custom")
-	spanPage1.Context.SetLabel("X-Correlation-Id", correlationId)
+	spanPage1, _ := opentracing.StartSpanFromContext(ctx, "page1")
+	//spanPage1, ctx := apm.StartSpan(ctx, "page1", "custom")
 
 	// Connect to first page
 	start1 := time.Now()
 	client1 := &http.Client{}
 	req1, _ := http.NewRequest("GET", page1, nil)
-	req1.Header.Set("X-Correlation-Id", correlationId)
+
+	// Serialize the wire, injecting context into headers
+	opentracing.GlobalTracer().Inject(
+		spanPage1.Context(),
+		opentracing.HTTPHeaders,
+		opentracing.HTTPHeadersCarrier(req1.Header))
 	resp1, err := client1.Do(req1)
 
 	defer resp1.Body.Close()
@@ -209,19 +181,22 @@ func connect2(c *gin.Context) {
 	message := "Connecting to " + page1 + " spent " + elapsed1.Truncate(time.Millisecond).String()
 
 	// End span - page1
-	spanPage1.End()
+	spanPage1.Finish()
+	//spanPage1.End()
 
 	// Declare span - page2
-	spanPage2, ctx := apm.StartSpan(ctx, "page2", "custom")
-	spanPage2.Context.SetLabel("X-Correlation-Id", correlationId)
+	spanPage2, _ := opentracing.StartSpanFromContext(ctx, "page2")
+	//spanPage2, ctx := apm.StartSpan(ctx, "page2", "custom")
 
 	// Connect to second page
 	start2 := time.Now()
 	client2 := &http.Client{}
 	req2, _ := http.NewRequest("GET", page2, nil)
-	//	if len(correlationId) > 0 {
-	req2.Header.Set("X-Correlation-Id", correlationId)
-	//	}
+	// Serialize the wire
+	opentracing.GlobalTracer().Inject(
+		spanPage1.Context(),
+		opentracing.HTTPHeaders,
+		opentracing.HTTPHeadersCarrier(req2.Header))
 	resp2, err := client2.Do(req2)
 
 	defer resp2.Body.Close()
@@ -236,11 +211,13 @@ func connect2(c *gin.Context) {
 	message += "\nConnecting to " + page2 + " spent " + elapsed2.Truncate(time.Millisecond).String()
 
 	// End span - page2
-	spanPage2.End()
+	spanPage2.Finish()
+	//spanPage2.End()
 
 	// Return results
 	c.String(200, message)
 
 	// End span - global
-	spanGlobal.End()
+	spanGlobal.Finish()
+	//spanGlobal.End()
 }
