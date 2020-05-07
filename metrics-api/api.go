@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"go.elastic.co/apm"
@@ -111,7 +112,33 @@ func connect(c *gin.Context) {
 	correlationId := c.GetHeader("X-Correlation-Id")
 
 	// Declare span - global
-	spanGlobal, ctx := apm.StartSpan(ctx, "connect", "custom")
+	// If X-Correlation-Id header is set, initialize with Trace ID
+	// If empty, use the new Trace ID as correlationId
+	var spanGlobal *apm.Span
+	if correlationId != "" {
+		var traceId apm.TraceID
+		correlationIdSlice, err := hex.DecodeString(correlationId)
+		if err != nil {
+			panic(err)
+		}
+		copy(traceId[:16], correlationIdSlice[:16])
+		err = traceId.Validate()
+		if err != nil {
+			panic(err)
+		}
+		// fmt.Printf("%s is a %T\n", traceId, traceId)
+		spanOptions := apm.SpanOptions{
+			Parent: apm.TraceContext{
+				Trace: traceId,
+			},
+		}
+		spanGlobal, ctx = apm.StartSpanOptions(ctx, "connect", "custom", spanOptions)
+	} else {
+		spanGlobal, ctx = apm.StartSpan(ctx, "connect", "custom")
+		traceId := apm.TransactionFromContext(ctx).TraceContext().Trace
+		correlationId = fmt.Sprint(traceId)
+	}
+
 	spanGlobal.Context.SetLabel("X-Correlation-Id", correlationId)
 
 	// Retrieve page
@@ -145,6 +172,8 @@ func connect2(c *gin.Context) {
 	//
 	ctx := c.Request.Context()
 	correlationId := c.GetHeader("X-Correlation-Id")
+
+	// Set X-Correlation-Id to Trace ID if set, leave it empty otherwise
 	if correlationId == "" {
 		traceId := apm.TransactionFromContext(ctx).TraceContext().Trace
 		correlationId = fmt.Sprint(traceId)

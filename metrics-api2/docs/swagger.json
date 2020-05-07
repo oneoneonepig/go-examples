@@ -1,0 +1,48 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Simple API for metric collecting",
+        "contact": {},
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0"
+    },
+    "host": "node01",
+    "basePath": "/v2",
+    "paths": {
+        "/error": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Produce error"
+            }
+        },
+        "/metrics": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Retrieve metrics"
+            }
+        },
+        "/ping": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Ping"
+            }
+        },
+        "/repair": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Repair the error"
+            }
+        }
+    }
+}
