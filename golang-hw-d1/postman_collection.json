@@ -1,0 +1,205 @@
+{
+	"info": {
+		"_postman_id": "9a5af5f6-186b-4a0b-826a-b758659e8c09",
+		"name": "布袋戲資料庫",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1_取得全部資料",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d3586dda-702d-498f-b398-15c5b1745402",
+						"exec": [
+							"\r",
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"阿修羅\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/role",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"role"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2_新增單筆資料",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d13b9b11-75cb-4de9-96a4-79d08815a035",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"伯藏主\");\r",
+							"});\r",
+							"\r",
+							"var newid =pm.response.json().id; \r",
+							"pm.environment.set(\"newid\", newid);\r",
+							"console.log(newid);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"伯藏主\",\r\n    \"summary\": \"原本應該繼位成為白狐國第65代君宇，後因其弟犬若丸篡位而流離至罪惡坑，成為二惡首。\",\r\n    \"skills\": [\r\n        {\r\n            \"type\": \"武學\",\r\n            \"name\": \"金風雪柳\"\r\n        },\r\n        {\r\n            \"type\": \"武學\",\r\n            \"name\": \"白狐封印\"\r\n        },\r\n        {\r\n            \"type\": \"武學\",\r\n            \"name\": \"無弦千波揚\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/role",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"role"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3_取得單筆資料",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/role/{{newid}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"role",
+						"{{newid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4_更新單筆資料",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8dffac53-2348-40f7-b3e4-e8c32fe2103d",
+						"exec": [
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"黑夷族侍長，負責族人戰鬥訓練和狩獵，握有黑蠻旗領導權\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"伯藏主\",\r\n    \"summary\": \"黑夷族侍長，負責族人戰鬥訓練和狩獵，握有黑蠻旗領導權\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/role/{{newid}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"role",
+						"{{newid}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5_刪除單筆資料",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c27a6b65-6093-48a4-a003-f4a64ca87c13",
+						"exec": [
+							"var newid = pm.variables.get(\"newid\");\r",
+							"\r",
+							"// pm.test(\"Status code is 204\", function () {\r",
+							"\r",
+							"//     pm.response.to.have.status(204);\r",
+							"// });    \r",
+							"\r",
+							"pm.sendRequest(\"http://localhost:8080/role/\"+newid, function (err, response) {\r",
+							"    \r",
+							"    pm.test(\"verify data is deleted\", function () {\r",
+							"\r",
+							"        pm.expect(response.code).to.eql(404);\r",
+							"    });    \r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/role/{{newid}}",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"role",
+						"{{newid}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
